@@ -1,6 +1,5 @@
 import psycopg2
-import time
-from datetime import datetime
+
 
 
 class JournalBase(object):
@@ -9,14 +8,17 @@ class JournalBase(object):
         self.dbw = dbw
         pass
 
+
     def __del__(self):
         print(self.code, ' gonna close conn')
         self.dbw.disconnect()
 
 
+
 class JournalClient(JournalBase):
     def __init__(self, code, dbw):
         super().__init__(code, dbw)
+
 
     def get_students_by_squad_code(self, squad: str):
         return self.dbw.query(
@@ -27,11 +29,13 @@ class JournalClient(JournalBase):
             (squad,)
         )
 
+
     def get_squads(self):
         return self.dbw.query(
             "SELECT id, code, name FROM squads",
             ()
         )
+
 
     def get_subjects(self):
         return self.dbw.query(
@@ -39,11 +43,13 @@ class JournalClient(JournalBase):
             ()
         )
 
+
     def get_marks_by_student(self, ID):
         return self.dbw.query(
             "SELECT id, val, date, subject_id, student_id FROM marks WHERE student_id = %s",
             (ID,)
         )
+
 
     def get_subject_name(self, ID):
         ret = self.dbw.query(
@@ -55,17 +61,20 @@ class JournalClient(JournalBase):
         else:
             return ["", ""]
 
+
     def save_mark(self, mark):
         self.dbw.query(
             "INSERT INTO marks (student_id, teacher_id, subject_id, val, date) VALUES (%s, %s, %s, %s, %s)",
             (mark.student_id, 1, mark.subject_id, mark.val, mark.date)
         )
 
+
     def delete_mark(self, mark):
         self.dbw.query(
             "DELETE FROM marks WHERE student_id = %s AND subject_id = %s AND date = %s",
             (mark.student_id, mark.subject_id, mark.date)
         )
+
 
     def get_marks_by_squad_id(self, squad_id):
         return self.dbw.query(
@@ -76,6 +85,7 @@ class JournalClient(JournalBase):
             (squad_id,)
         )
 
+
     def get_marks_by_subject_squad(self, subj_ID, squad_ID):
         return self.dbw.query(
             "SELECT m.id, m.val, m.date, m.subject_id, m.student_id "
@@ -85,6 +95,7 @@ class JournalClient(JournalBase):
             (subj_ID, squad_ID)
         )
 
+
     def get_student_by_id(self, ID):
         return self.dbw.query(
             "SELECT id, first_name, middle_name, last_name, squad_id"
@@ -92,6 +103,7 @@ class JournalClient(JournalBase):
             "   WHERE id = %s",
             (ID,)
         )
+
 
     def get_penalties_by_student_id(self, ID):
         return self.dbw.query(
@@ -102,6 +114,7 @@ class JournalClient(JournalBase):
             "   ORDER BY penalties.date DESC",
             (ID,)
         )
+
 
     def get_duties_by_student_id(self, ID):
         return self.dbw.query(
@@ -114,6 +127,7 @@ class JournalClient(JournalBase):
             (ID,)
         )
 
+
     def get_penalty_types(self):
         return self.dbw.query(
             "SELECT id, name "
@@ -121,6 +135,7 @@ class JournalClient(JournalBase):
             "   WHERE NOT penalty_types.good",
             ()
         )
+
 
     def get_promotion_types(self):
         return self.dbw.query(
@@ -130,12 +145,14 @@ class JournalClient(JournalBase):
             ()
         )
 
+
     def get_duty_types(self):
         return self.dbw.query(
             "SELECT id, name"
             "   FROM duty_types",
             ()
         )
+
 
     def get_good_cnt(self, ID):
         return self.dbw.query(
@@ -147,6 +164,7 @@ class JournalClient(JournalBase):
             (ID,)
         )[0][0]
 
+
     def get_bad_cnt(self, ID):
         return self.dbw.query(
             "SELECT count(p.id)"
@@ -156,6 +174,7 @@ class JournalClient(JournalBase):
             "   AND NOT pt.good",
             (ID,)
         )[0][0]
+
 
     # ToDo teacher_id
     def add_penalty(self, penalty_type, comment, student_ID, teacher_ID, date):
@@ -167,6 +186,7 @@ class JournalClient(JournalBase):
         )
         pass
 
+
     def add_duty(self, duty_type, comment, student_ID, date, mark):
         args = (duty_type, comment, student_ID, date, mark)
         self.dbw.query(
@@ -175,6 +195,7 @@ class JournalClient(JournalBase):
             args
         )
         pass
+
 
     def get_average_marks(self, student_id):
         return self.dbw.query(
@@ -187,12 +208,14 @@ class JournalClient(JournalBase):
             (student_id,)
         )
 
+
     def get_all_events(self):
         return self.dbw.query(
             "SELECT id, name, date FROM events"
             "   ORDER BY date DESC",
             [[]]
         )
+
 
     def get_all_events_without_student(self, student_id):
         return self.dbw.query(
@@ -210,6 +233,7 @@ class JournalClient(JournalBase):
 
         )
 
+
     def add_event(self, date, name):
         self.dbw.query(
             "INSERT INTO EVENTS (date, name)"
@@ -217,12 +241,14 @@ class JournalClient(JournalBase):
             (date, name)
         )
 
+
     def add_event_participant(self, event_id, student_id):
         self.dbw.query(
             "INSERT INTO event_participants (event_id, student_id)"
             "VALUES (%s, %s)",
             (event_id, student_id)
         )
+
 
     def get_events_by_student_id(self, student_id):
         return self.dbw.query(
@@ -232,6 +258,7 @@ class JournalClient(JournalBase):
             "   WHERE ep.student_id = %s",
             (student_id,)
         )
+
 
 
 class DBWrapper(object):
@@ -250,6 +277,7 @@ class DBWrapper(object):
         self.cur = None
         print('init db with id =', id(self))
 
+
     def connect(self):
         self.conn = psycopg2.connect(
             dbname=self.db_name,
@@ -259,11 +287,13 @@ class DBWrapper(object):
             port=self.port)
         self.cur = self.conn.cursor()
 
+
     def disconnect(self):
         if hasattr(self, 'cur'):
             self.cur.close()
         if hasattr(self, 'conn'):
             self.conn.close()
+
 
     def query(self, query, args):
         self.cur.execute(query, args)
@@ -275,10 +305,12 @@ class DBWrapper(object):
         self.conn.commit()
         return ret
 
+
     def query_list(self, ls):
         for elem in ls:
             self.cur.execute(elem[0], elem[1])
         self.conn.commit()
+
 
 
 class Mark(object):
@@ -289,8 +321,10 @@ class Mark(object):
         self.subject_id = ls[3]
         self.student_id = ls[4]
 
+
     def __str__(self):
         return f'id={self.id}, val={self.val}, date={self.date}, subj={self.subject_id}, student={self.student_id}'
+
 
 
 class Student(object):
@@ -301,13 +335,16 @@ class Student(object):
         self.last = ls[3]
         self.squad_id = ls[4]
 
+
     def __str__(self):
         return f'{self.last} {self.first[0]}. {self.middle[0]}.'
+
 
 
 class MarksTable(object):
     def __init__(self):
         pass
+
 
 
 class Penalty(object):
@@ -321,6 +358,7 @@ class Penalty(object):
         self.date = ls[6]
 
 
+
 class Duty(object):
     def __init__(self, ls):
         self.id = ls[0]
@@ -331,6 +369,7 @@ class Duty(object):
         # self.teacher = ls[5]
         self.date = ls[5]
         self.mark = ls[6]
+
 
 
 class Event(object):

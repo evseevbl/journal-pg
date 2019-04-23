@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QDialog, QDialogButtonBox, QDateEdit, QComboBox, QLineEdit, QPushButton
 from PyQt5.QtCore import QDateTime
-from . import helpers as helpers
+from app import helpers as helpers
 from copy import deepcopy as dc
 
 

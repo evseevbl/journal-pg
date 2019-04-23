@@ -3,12 +3,12 @@ from app.conn import DBWrapper, JournalClient, Mark, Student, Penalty, Duty, Eve
 
 from PyQt5.QtCore import QModelIndex
 
-from app.model import MyTableModel
-from app.mark_edit import MarkEdit
-from app.date import DateDialog
-from app.penalty import PenaltyDialog
-from app.event import EventDialog
-from app.duty import DutyDialog
+from app.ui.model import MyTableModel
+from app.ui.mark_edit import MarkEdit
+from app.ui.date import DateDialog
+from app.ui.penalty import PenaltyDialog
+from app.ui.event import EventDialog
+from app.ui.duty import DutyDialog
 from app import helpers
 from datetime import datetime
 from copy import deepcopy as dc

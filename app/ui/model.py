@@ -7,16 +7,12 @@ used the Anaconda package (comes with PyQt5) on OS X
 (dns)
 '''
 
-# coding=utf-8
 
 import operator  # used for sorting
 from PyQt5.QtCore import *
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableView, QAbstractItemView, QCheckBox, QApplication, QDialog, \
     QLineEdit, QPushButton
-
-from time import time
-import threading
 
 
 class Form(QDialog):
