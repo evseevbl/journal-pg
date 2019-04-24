@@ -2,6 +2,72 @@ import psycopg2
 
 
 
+class DBParameters(object):
+    def __init__(self,
+                 db_name='journal',
+                 user='boris',
+                 password='boris',
+                 host='localhost',
+                 port='5432'):
+        self.db_name = db_name
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+
+
+
+class DBWrapper(object):
+    def __init__(self,
+                 params: DBParameters = None,
+                 ):
+        if params is None:
+            params = DBParameters()
+
+        self.db_name = params.db_name
+        self.user = params.user
+        self.password = params.password
+        self.host = params.host
+        self.port = params.port
+        self.conn = None
+        self.cur = None
+        print('init db with id =', id(self))
+
+
+    def connect(self):
+        self.conn = psycopg2.connect(
+            dbname=self.db_name,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port)
+        self.cur = self.conn.cursor()
+
+
+    def disconnect(self):
+        if hasattr(self, 'cur'):
+            self.cur.close()
+        if hasattr(self, 'conn'):
+            self.conn.close()
+
+
+    def query(self, query, args):
+        self.cur.execute(query, args)
+        try:
+            ret = self.cur.fetchall()
+        except psycopg2.ProgrammingError as e:
+            print(e)
+            ret = None
+        self.conn.commit()
+        return ret
+
+
+    def query_list(self, ls):
+        for elem in ls:
+            self.cur.execute(elem[0], elem[1])
+        self.conn.commit()
+
+
 class JournalBase(object):
     def __init__(self, code, dbw):
         self.code = code
@@ -16,7 +82,7 @@ class JournalBase(object):
 
 
 class JournalClient(JournalBase):
-    def __init__(self, code, dbw):
+    def __init__(self, code: str, dbw: DBWrapper):
         super().__init__(code, dbw)
 
 
@@ -259,57 +325,6 @@ class JournalClient(JournalBase):
             (student_id,)
         )
 
-
-
-class DBWrapper(object):
-    def __init__(self,
-                 db_name='journal',
-                 user='boris',
-                 password='boris',
-                 host='localhost',
-                 port='5432'):
-        self.db_name = db_name
-        self.user = user
-        self.password = password
-        self.host = host
-        self.port = port
-        self.conn = None
-        self.cur = None
-        print('init db with id =', id(self))
-
-
-    def connect(self):
-        self.conn = psycopg2.connect(
-            dbname=self.db_name,
-            user=self.user,
-            password=self.password,
-            host=self.host,
-            port=self.port)
-        self.cur = self.conn.cursor()
-
-
-    def disconnect(self):
-        if hasattr(self, 'cur'):
-            self.cur.close()
-        if hasattr(self, 'conn'):
-            self.conn.close()
-
-
-    def query(self, query, args):
-        self.cur.execute(query, args)
-        try:
-            ret = self.cur.fetchall()
-        except psycopg2.ProgrammingError as e:
-            print(e)
-            ret = None
-        self.conn.commit()
-        return ret
-
-
-    def query_list(self, ls):
-        for elem in ls:
-            self.cur.execute(elem[0], elem[1])
-        self.conn.commit()
 
 
 

@@ -1,5 +1,5 @@
 from .marks import Ui_wMarks
-from app.conn import DBWrapper, JournalClient, Mark, Student, Penalty, Duty, Event
+from app.conn import DBWrapper, JournalClient, Mark, Student, Penalty, Duty, Event, DBParameters
 
 from psycopg2 import OperationalError
 from PyQt5.QtCore import QModelIndex
@@ -17,7 +17,8 @@ from copy import deepcopy as dc
 
 
 class MarksUI(object):
-    def __init__(self, window):
+    def __init__(self, window, cli: JournalClient):
+        self.cli = cli
         wm = Ui_wMarks()
         wm.setupUi(window)
         self.teacher_id = 1
@@ -37,19 +38,11 @@ class MarksUI(object):
         self.arr_events = [[]]
 
         self.w.tMarksStudent.setHidden(True)
-        self.dbw = DBWrapper()
+        self.connect_handlers()
+        self.fill_squads()
 
-        try:
-            self.dbw.connect()
-            self.cli = JournalClient("marks", self.dbw)
-            # init database
-            self.connect_handlers()
-            self.fill_squads()
-
-            self.current_students = []
-            self.current_students_ids = []
-        except OperationalError as e:
-            print("no db: ", e)
+        self.current_students = []
+        self.current_students_ids = []
 
         self.student_model = MyTableModel(None, self.arr_student, [], [])
         self.subj_model = MyTableModel(None, self.arr_subj, [], [])

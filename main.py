@@ -1,14 +1,17 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from app.ui.marks_ui import MarksUI
+from app.ui.login import LoginDialog
 
 
 
 def main():
     app = QApplication(sys.argv)
-    window = QMainWindow()
-    _ = MarksUI(window)
-    window.show()
+    cli, ok = LoginDialog().showDialog()
+    if ok:
+        window = QMainWindow()
+        _ = MarksUI(window, cli)
+        window.show()
     sys.exit(app.exec_())
 
 
