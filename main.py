@@ -1,3 +1,8 @@
+import os
+
+print(os.getcwd())
+print(__name__)
+
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from app.ui.marks_ui import MarksUI
