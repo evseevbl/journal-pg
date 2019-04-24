@@ -12,6 +12,7 @@ class LoginDialog(QDialog):
         super(LoginDialog, self).__init__(parent)
         self.params: DBParameters = None
         self.cli: JournalClient = None
+
         db_name = 'journal'
         host = 'localhost'
         port = '5432'
@@ -73,6 +74,7 @@ class LoginDialog(QDialog):
 
         dbw = DBWrapper(params=self.params)
         try:
+            self.lStatus.setText("Подключение...")
             dbw.connect()
             self.cli = JournalClient("marks", dbw)
             self.lStatus.setText("Успешно")

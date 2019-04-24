@@ -12,6 +12,8 @@ def main():
         window = QMainWindow()
         _ = MarksUI(window, cli)
         window.show()
+    else:
+        return
     sys.exit(app.exec_())
 
 
