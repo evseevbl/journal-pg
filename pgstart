@@ -1,0 +1,1 @@
+docker run --rm -P -p 127.0.0.1:5432:5432 --name journal -e POSTGRES_USER=boris -e POSTGRES_PASSWORD=boris -e POSTGRES_DB=journal -v pgdata:/var/lib/postgresql/data postgres

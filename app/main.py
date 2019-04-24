@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from app.ui.marks_ui import MarksUI
-
 import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from app.ui.marks_ui import MarksUI
 
 
 
@@ -9,9 +8,7 @@ def main():
     app = QApplication(sys.argv)
     window = QMainWindow()
     _ = MarksUI(window)
-
     window.show()
-    window.setWindowTitle("Электронный журнал, версия " + "ff")
     sys.exit(app.exec_())
 
 
